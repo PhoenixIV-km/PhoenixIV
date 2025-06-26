@@ -7,11 +7,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -42,10 +43,15 @@ public class DownloadServiceImpl implements DownloadService {
             Bitmap bitmap = BitmapFactory.decodeStream(input);
 
             // Create file in internal storage
-            final var path = Path.of(contextPath + "/" + mangaName + "/" + chapter + "/" + i + ".jpg");
+            File file = new File(contextPath + "/" + mangaName + "/" + chapter + "/" + i + ".jpg");
+            // Make sure all parent directories exist
+            File parent = file.getParentFile();
+            assert parent == null || parent.exists() || parent.mkdirs();
+            // Make sure file exists
+            assert file.exists() || file.createNewFile();
 
             // Save bitmap to file
-            FileOutputStream output = new FileOutputStream(path.toFile());
+            FileOutputStream output = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
 
             output.flush();
