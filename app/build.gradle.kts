@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.quatre.phoenix"
-        minSdk = 30
+        minSdk = 35
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -38,7 +38,9 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.jsoup)
-    implementation(libs.lombok)
+    implementation(libs.slf4j)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
