@@ -1,26 +1,31 @@
 package com.quatre.phoenix;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import android.content.Context;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.quatre.phoenix.impl.DownloadServiceImpl;
 import com.quatre.phoenix.service.DownloadService;
-import com.quatre.phoenix.utils.FileUtils;
-import com.quatre.phoenix.utils.PictureCallback;
-import org.jsoup.select.Elements;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @RunWith(AndroidJUnit4.class)
 public class DownloadServiceInstrumentedTest {
+
+    public static final String URL = "https://manhuaplus.com/manga/demon-magic-emperor01/chapter-717/";
+    public static final String MANGA_NAME = "MagicEmperor";
+    public static final String CHAPTER = "717";
+    public static final String SLASH = "/";
+    public static final String CSS_QUERY = "img";
+    public static final int IMAGE_COUNT = 10;
 
     private Context context;
     private DownloadService downloadService;
@@ -29,10 +34,6 @@ public class DownloadServiceInstrumentedTest {
     public void init() {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         downloadService = new DownloadServiceImpl();
-    }
-
-    @After
-    public void teardown() {
     }
 
     @Test
@@ -44,56 +45,30 @@ public class DownloadServiceInstrumentedTest {
 
     // asynchronous unit tests needs Instrumented
     @Test
-    public void testGetAllPicturesFromUrl() throws IOException, InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
-
-        downloadService.getAllPicturesFromUrl("https://manhuaplus.com/manga/demon-magic-emperor01/chapter-717/", "img", new PictureCallback() {
-                    @Override
-                    public void onResult(Elements pictures) {
-                        assertEquals(10, pictures.size());
-                        final var last = pictures.last();
-                        assert last != null;
-                        assertEquals("img", last.tag().getName());
-                        final var src = last.attribute("src");
-                        assert src != null;
-                        assertEquals("//pixel.quantserve.com/pixel/p-PZmZQZSQ-y1yB.gif", src.getValue());
-                        System.out.println("TEST SUCCEEEESSSSS");
-                        latch.countDown(); // unblock
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        assertEquals(Boolean.FALSE, Boolean.TRUE);
-                        latch.countDown(); // unblock
-                    }
-                }
-        );
-        // Wait for the async call to finish (timeout after 10 seconds to avoid hanging forever)
-        latch.await(10, TimeUnit.SECONDS);
+    public void testGetAllPicturesFromUrl() throws InterruptedException, ExecutionException {
+        final var pictures = downloadService.getAllPicturesFromUrl(URL, CSS_QUERY).get();
+        assertEquals(IMAGE_COUNT, pictures.size());
+        final var last = pictures.get(pictures.size() - 1);
+        assertNotNull(last);
+        assertEquals(CSS_QUERY, last.tag().getName());
+        final var src = last.attribute("src");
+        assertNotNull(src);
+        assertEquals("//pixel.quantserve.com/pixel/p-PZmZQZSQ-y1yB.gif", src.getValue());
     }
 
     // BitmapFactory.decodeStream() needs Instrumented
     // Stores in /data/data/com.quatre.phoenix/files/MagicEmperor/717/0.jpg
     @Test
-    public void testStoreAllPicturesOnInternalMemory() throws IOException {
-        downloadService.getAllPicturesFromUrl("https://manhuaplus.com/manga/demon-magic-emperor01/chapter-717/", "img", new PictureCallback() {
-                    @Override
-                    public void onResult(Elements pictures) {
-                        final var path = Paths.get(context.getFilesDir().getPath());
-                        try {
-                            downloadService.storeAllPicturesOnInternalMemory(pictures, "MagicEmperor", "717", path.toAbsolutePath().toString());
-                            final var files = FileUtils.getFilesFromFolder(path);
-                            assertEquals(10, files.size());
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        assertEquals(Boolean.FALSE, Boolean.TRUE);
-                    }
-                }
-        );
+    public void testStoreAllPicturesOnInternalMemory() throws IOException, InterruptedException, ExecutionException {
+        final var pictures = downloadService.getAllPicturesFromUrl(URL, CSS_QUERY).get();
+        final var path = Paths.get(context.getFilesDir().getPath());
+        final var files = downloadService.storeAllPicturesOnInternalMemory(pictures, MANGA_NAME, CHAPTER, path.toAbsolutePath().toString()).get();
+        assertEquals(IMAGE_COUNT, files.size());
+        final var sortedList = files.stream().sorted().collect(Collectors.toList());
+        final var last = sortedList.get(sortedList.size() - 1);
+        assertEquals(path + SLASH + MANGA_NAME + SLASH + CHAPTER + SLASH + "9.jpg", last.toPath().toAbsolutePath().toString());
+        try (FileChannel imageFileChannel = FileChannel.open(last.toPath())) {
+            assertEquals(839, imageFileChannel.size());
+        }
     }
 }

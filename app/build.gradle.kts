@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "com.quatre.phoenix"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.quatre.phoenix"
@@ -29,6 +29,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    lint {
+        checkReleaseBuilds = true
+        abortOnError = true // Fails the build on lint errors
+    }
 }
 
 dependencies {
@@ -39,6 +44,8 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.jsoup)
     implementation(libs.slf4j.api)
+    implementation(libs.guava)
+    implementation(libs.guava.retrying)
     runtimeOnly(libs.slf4j.simple)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)

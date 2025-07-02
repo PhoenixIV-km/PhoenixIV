@@ -1,12 +1,14 @@
 package com.quatre.phoenix.service;
 
-import com.quatre.phoenix.utils.PictureCallback;
-import org.jsoup.select.Elements;
-import java.io.IOException;
+import com.google.common.util.concurrent.ListenableFuture;
+import org.jsoup.nodes.Element;
+import java.io.File;
+import java.util.List;
 
 public interface DownloadService {
     void onDestroy();
 
-    void getAllPicturesFromUrl(String url, String cssQuery, PictureCallback pictureCallback) throws IOException;
-    void storeAllPicturesOnInternalMemory(Elements elements, String mangaName, String chapter, String contextPath) throws IOException;
+    ListenableFuture<List<Element>> getAllPicturesFromUrl(String url, String cssQuery);
+
+    ListenableFuture<List<File>> storeAllPicturesOnInternalMemory(List<Element> elements, String mangaName, String chapter, String contextPath);
 }

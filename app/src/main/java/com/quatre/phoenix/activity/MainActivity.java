@@ -9,12 +9,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import com.github.rholder.retry.RetryException;
+import com.github.rholder.retry.Retryer;
 import com.quatre.phoenix.R;
 import com.quatre.phoenix.impl.DownloadServiceImpl;
 import com.quatre.phoenix.service.DownloadService;
-import com.quatre.phoenix.utils.PictureCallback;
-import org.jsoup.select.Elements;
-import java.io.IOException;
+import com.quatre.phoenix.utils.FileUtils;
+import org.jsoup.nodes.Element;
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -29,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         // init services
         downloadService = new DownloadServiceImpl();
 
-        // configure UI
+        // configure generic UI
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -39,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        // manage UI
+        // configure reader specific UI
         final var downloadButton = findViewById(R.id.downloadButton);
         final var displayButton = findViewById(R.id.displayButton);
         displayButton.setEnabled(false); // Initially disabled
@@ -56,37 +60,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void manageImages(View displayButton) {
+        final Retryer<List<Element>> loadingRetryer = FileUtils.getRetryer();
+        final Retryer<List<File>> storingRetryer = FileUtils.getRetryer();
+        final List<Element> pictures;
+
+        // load all pictures info
         try {
-            downloadService.getAllPicturesFromUrl("https://manhuaplus.com/manga/demon-magic-emperor01/chapter-717/", "img", new PictureCallback() {
-                @Override
-                public void onResult(Elements elements) {
-                    runOnUiThread(() -> {
-                        // Enable the display button when download is complete
-                        displayButton.setEnabled(true);
-                        Toast.makeText(MainActivity.this, "Download complete!", Toast.LENGTH_SHORT).show();
-                        try {
-                            downloadService.storeAllPicturesOnInternalMemory(elements, "MagicEmperor", "717", getFilesDir().getAbsolutePath());
-                        } catch (IOException e) {
-                            // TODO generalize
-                            log.error("Failed to store images with ", e);
-                            throw new RuntimeException(e);
-                        }
-                    });
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    // TODO generalize
-                    log.error("Failed to download images with ", e);
-                    throw new RuntimeException(e);
-                }
-            });
-
-        } catch (IOException e) {
-            // TODO generalize
-            log.error("Failed to download images with ", e);
+            pictures = loadingRetryer.call(() -> downloadService.getAllPicturesFromUrl("https://manhuaplus.com/manga/demon-magic-emperor01/chapter-717/", "img").get());
+            Toast.makeText(MainActivity.this, "Loading complete!", Toast.LENGTH_SHORT).show();
+        } catch (ExecutionException | RetryException e) {
+            Toast.makeText(MainActivity.this, "Loading failed!", Toast.LENGTH_SHORT).show();
             throw new RuntimeException(e);
         }
+
+        // store all pictures internally
+        runOnUiThread(() -> {
+            try {
+                storingRetryer.call(() -> downloadService.storeAllPicturesOnInternalMemory(pictures, "MagicEmperor", "717", getFilesDir().getAbsolutePath()).get());
+                displayButton.setEnabled(true); // Enable the display button when download is complete
+                Toast.makeText(MainActivity.this, "Download complete!", Toast.LENGTH_SHORT).show();
+            } catch (ExecutionException | RetryException e) {
+                displayButton.setEnabled(false); // Enable the display button when download is complete
+                Toast.makeText(MainActivity.this, "Download failed!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
