@@ -6,27 +6,5 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    <LinearLayout
-        android:id="@+id/line"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <Button
-            android:id="@+id/downloadButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/download" />
-
-        <Button
-            android:id="@+id/displayButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="@string/display" />
-    </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

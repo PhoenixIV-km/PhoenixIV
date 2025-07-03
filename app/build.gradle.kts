@@ -46,6 +46,8 @@ dependencies {
     implementation(libs.slf4j.api)
     implementation(libs.guava)
     implementation(libs.guava.retrying)
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
     runtimeOnly(libs.slf4j.simple)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)

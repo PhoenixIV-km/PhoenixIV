@@ -38,15 +38,13 @@ public class DownloadServiceInstrumentedTest {
 
     @Test
     public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.quatre.phoenix", appContext.getPackageName());
+        assertEquals("com.quatre.phoenix", context.getPackageName());
     }
 
     // asynchronous unit tests needs Instrumented
     @Test
     public void testGetAllPicturesFromUrl() throws InterruptedException, ExecutionException {
-        final var pictures = downloadService.getAllPicturesFromUrl(URL, CSS_QUERY).get();
+        final var pictures = downloadService.getAllElementsFromUrl(URL, CSS_QUERY).get();
         assertEquals(IMAGE_COUNT, pictures.size());
         final var last = pictures.get(pictures.size() - 1);
         assertNotNull(last);
@@ -60,7 +58,7 @@ public class DownloadServiceInstrumentedTest {
     // Stores in /data/data/com.quatre.phoenix/files/MagicEmperor/717/0.jpg
     @Test
     public void testStoreAllPicturesOnInternalMemory() throws IOException, InterruptedException, ExecutionException {
-        final var pictures = downloadService.getAllPicturesFromUrl(URL, CSS_QUERY).get();
+        final var pictures = downloadService.getAllElementsFromUrl(URL, CSS_QUERY).get();
         final var path = Paths.get(context.getFilesDir().getPath());
         final var files = downloadService.storeAllPicturesOnInternalMemory(pictures, MANGA_NAME, CHAPTER, path.toAbsolutePath().toString()).get();
         assertEquals(IMAGE_COUNT, files.size());

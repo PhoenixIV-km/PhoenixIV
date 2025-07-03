@@ -4,11 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.quatre.phoenix.service.DownloadService;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,31 +14,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class DownloadServiceImpl implements DownloadService {
-
-    private final ListeningExecutorService listeningExecutor = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
-
-    @Override
-    public void onDestroy() {
-        listeningExecutor.shutdown();
-    }
-
-    @Override
-    public ListenableFuture<List<Element>> getAllPicturesFromUrl(String url, String cssQuery) {
-        return listeningExecutor.submit(() -> {
-            try {
-                Document doc = Jsoup.connect(url).get(); // Fetch the HTML content
-                return doc.select(cssQuery).asList();
-            } catch (IOException e) {
-                log.error("Error while processing url {}", url, e);
-                throw e;
-            }
-        });
-    }
+public class DownloadServiceImpl extends AbstractWebBrowserServiceImpl implements DownloadService {
 
     @Override
     public ListenableFuture<List<File>> storeAllPicturesOnInternalMemory(List<Element> elements, String mangaName, String chapter, String contextPath) {
