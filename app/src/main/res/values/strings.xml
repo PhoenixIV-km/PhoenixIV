@@ -3,4 +3,6 @@
     <string name="image">image</string>
     <string name="download">Download</string>
     <string name="display">Display</string>
+    <string name="default_to_change">DEFAULT_TO_CHANGE</string>
+    <string name="custom_generic_toast">Custom generic toast</string>
 </resources>

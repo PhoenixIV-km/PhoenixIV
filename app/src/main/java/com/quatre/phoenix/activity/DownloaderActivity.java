@@ -3,7 +3,6 @@ package com.quatre.phoenix.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.github.rholder.retry.RetryException;
 import com.github.rholder.retry.Retryer;
@@ -12,6 +11,7 @@ import com.quatre.phoenix.entity.Chapter;
 import com.quatre.phoenix.impl.DownloadServiceImpl;
 import com.quatre.phoenix.service.DownloadService;
 import com.quatre.phoenix.utils.FileUtils;
+import com.quatre.phoenix.utils.SnackbarMaker;
 import org.jsoup.nodes.Element;
 import java.io.File;
 import java.util.List;
@@ -48,13 +48,14 @@ public class DownloaderActivity extends AppCompatActivity {
         final Retryer<List<Element>> loadingRetryer = FileUtils.getRetryer();
         final Retryer<List<File>> storingRetryer = FileUtils.getRetryer();
         final List<Element> pictures;
+        final var rootView = findViewById(android.R.id.content);
 
         // load all pictures info
         try {
             pictures = loadingRetryer.call(() -> downloadService.getAllElementsFromUrl(chapter.getUrl(), "img").get());
-            Toast.makeText(DownloaderActivity.this, "Loading complete!", Toast.LENGTH_SHORT).show();
+            SnackbarMaker.showCustomSnackbar(rootView, "Loading complete!", Boolean.TRUE);
         } catch (ExecutionException | RetryException e) {
-            Toast.makeText(DownloaderActivity.this, "Loading failed!", Toast.LENGTH_SHORT).show();
+            SnackbarMaker.showCustomSnackbar(rootView, "Download failed!", Boolean.FALSE);
             throw new RuntimeException(e);
         }
 
@@ -63,10 +64,10 @@ public class DownloaderActivity extends AppCompatActivity {
             try {
                 storingRetryer.call(() -> downloadService.storeAllPicturesOnInternalMemory(pictures, mangaName, chapter.getName(), getFilesDir().getAbsolutePath()).get());
                 displayButton.setEnabled(true); // Enable the display button when download is complete
-                Toast.makeText(DownloaderActivity.this, "Download complete!", Toast.LENGTH_SHORT).show();
+                SnackbarMaker.showCustomSnackbar(rootView, "Download complete!", Boolean.TRUE);
             } catch (ExecutionException | RetryException e) {
                 displayButton.setEnabled(false); // Enable the display button when download is complete
-                Toast.makeText(DownloaderActivity.this, "Download failed!", Toast.LENGTH_SHORT).show();
+                SnackbarMaker.showCustomSnackbar(rootView, "Download failed!", Boolean.FALSE);
             }
         });
     }

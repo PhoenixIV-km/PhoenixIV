@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.quatre.phoenix.R;
-import com.quatre.phoenix.utils.ImageAdapter;
+import com.quatre.phoenix.adapter.ImageAdapter;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;

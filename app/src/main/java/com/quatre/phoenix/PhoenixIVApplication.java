@@ -4,9 +4,9 @@ import android.app.Application;
 import androidx.room.Room;
 import lombok.Getter;
 
-@Getter
 public class PhoenixIVApplication extends Application {
 
+    @Getter
     private static AppDatabase appDatabase;
 
     @Override

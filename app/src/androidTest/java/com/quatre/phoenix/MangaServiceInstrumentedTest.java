@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import android.content.Context;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import com.quatre.phoenix.entity.Manga;
 import com.quatre.phoenix.impl.MangaServiceImpl;
 import com.quatre.phoenix.service.MangaService;
 import org.junit.Before;
@@ -44,5 +45,15 @@ public class MangaServiceInstrumentedTest {
         assertEquals("a", last.tag().getName());
         assertEquals("https://manhuaplus.com/manga/demon-magic-emperor01/chapter-1/", Objects.requireNonNull(last.attribute("href")).getValue());
         assertEquals("Chapter 1", last.text());
+    }
+
+    @Test
+    public void testGetAllMangas() throws ExecutionException, InterruptedException {
+        final var m1 = new Manga("url", "css", "name");
+        final var m2 = new Manga("url2", "css2", "name2");
+        PhoenixIVApplication.getAppDatabase().mangaDao().insertAll(m1, m2);
+        final var mangas = mangaService.getAllMangas().get();
+        assertEquals(2, mangas.size());
+        assertEquals("name", mangas.get(0).getName());
     }
 }

@@ -8,7 +8,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.quatre.phoenix.R;
-import com.quatre.phoenix.entity.Manga;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,13 +27,11 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        openMangaActivity();
+        openLibraryActivity();
     }
 
-    private void openMangaActivity() {
-        final Manga manga = new Manga("https://manhuaplus.com/manga/demon-magic-emperor01/", "ul > li.wp-manga-chapter > a", "Magic Emperor");
-        final var intent = new Intent(MainActivity.this, MangaActivity.class);
-        intent.putExtra("manga", manga);
+    private void openLibraryActivity() {
+        final var intent = new Intent(MainActivity.this, LibraryActivity.class);
         startActivity(intent);
     }
 }

@@ -1,4 +1,4 @@
-package com.quatre.phoenix.utils;
+package com.quatre.phoenix.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

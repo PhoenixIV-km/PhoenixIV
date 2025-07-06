@@ -1,4 +1,4 @@
-package com.quatre.phoenix.utils;
+package com.quatre.phoenix.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,17 +9,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.quatre.phoenix.R;
-import com.quatre.phoenix.activity.DownloaderActivity;
-import com.quatre.phoenix.entity.Chapter;
+import com.quatre.phoenix.activity.MangaActivity;
+import com.quatre.phoenix.entity.Manga;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.TextViewHolder> {
+public class MangaListAdapter extends RecyclerView.Adapter<MangaListAdapter.TextViewHolder> {
 
     private final Context context;
-    private final String mangaName;
-    private final List<Chapter> items;
+    private final List<Manga> mangas;
 
     @NonNull
     @Override
@@ -30,21 +29,20 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull TextViewHolder holder, int position) {
-        final var chapter = items.get(position);
-        holder.textView.setText(chapter.getName());
+        final var manga = mangas.get(position);
+        holder.textView.setText(manga.getName());
 
         // Set click listener
         holder.textView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, DownloaderActivity.class);
-            intent.putExtra("mangaName", mangaName);
-            intent.putExtra("chapter", chapter);
+            Intent intent = new Intent(context, MangaActivity.class);
+            intent.putExtra("manga", manga);
             context.startActivity(intent);
         });
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return mangas.size();
     }
 
     public static class TextViewHolder extends RecyclerView.ViewHolder {
