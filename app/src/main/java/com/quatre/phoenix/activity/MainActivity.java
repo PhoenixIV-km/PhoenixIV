@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openMangaActivity() {
-        final Manga manga = new Manga("https://manhuaplus.com/manga/demon-magic-emperor01/", "Magic Emperor");
+        final Manga manga = new Manga("https://manhuaplus.com/manga/demon-magic-emperor01/", "ul > li.wp-manga-chapter > a", "Magic Emperor");
         final var intent = new Intent(MainActivity.this, MangaActivity.class);
         intent.putExtra("manga", manga);
         startActivity(intent);

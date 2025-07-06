@@ -20,6 +20,9 @@ public class Manga implements Serializable {
     private String url;
 
     @NonNull
+    private String cssQuery;
+
+    @NonNull
     private String name;
 
     private String picturePath;
@@ -40,6 +43,15 @@ public class Manga implements Serializable {
 
     public void setUrl(@NonNull String url) {
         this.url = url;
+    }
+
+    @NonNull
+    public String getCssQuery() {
+        return cssQuery;
+    }
+
+    public void setCssQuery(@NonNull String cssQuery) {
+        this.cssQuery = cssQuery;
     }
 
     @NonNull

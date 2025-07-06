@@ -36,7 +36,7 @@ public class MangaActivity extends AppCompatActivity {
         List<Chapter> chaptersUrls;
         try {
             assert manga != null;
-            final var chapters = mangaService.getAllElementsFromUrl(manga.getUrl(), "ul > li.wp-manga-chapter > a").get();
+            final var chapters = mangaService.getAllElementsFromUrl(manga.getUrl(), manga.getCssQuery()).get();
             chaptersUrls = chapters.stream().map(c -> new Chapter(manga.getId(), Objects.requireNonNull(Objects.requireNonNull(c.attribute("href")).getValue()), c.text())).collect(Collectors.toList());
             Toast.makeText(MangaActivity.this, "Loading complete!", Toast.LENGTH_SHORT).show();
         } catch (ExecutionException | InterruptedException e) {
