@@ -48,7 +48,7 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
     }
 
     public static class TextViewHolder extends RecyclerView.ViewHolder {
-        TextView textView;
+        final TextView textView;
 
         public TextViewHolder(@NonNull View itemView) {
             super(itemView);

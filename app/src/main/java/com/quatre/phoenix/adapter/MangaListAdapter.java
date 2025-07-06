@@ -46,7 +46,7 @@ public class MangaListAdapter extends RecyclerView.Adapter<MangaListAdapter.Text
     }
 
     public static class TextViewHolder extends RecyclerView.ViewHolder {
-        TextView textView;
+        final TextView textView;
 
         public TextViewHolder(@NonNull View itemView) {
             super(itemView);
