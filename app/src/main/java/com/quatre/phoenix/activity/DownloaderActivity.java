@@ -47,7 +47,7 @@ public class DownloaderActivity extends AppCompatActivity {
 
         // load all pictures info
         try {
-            pictures = loadingRetryer.call(() -> downloadService.getAllElementsFromUrl(chapter.getName(), "img").get());
+            pictures = loadingRetryer.call(() -> downloadService.getAllElementsFromUrl(chapter.getUrl(), "img").get());
             Toast.makeText(DownloaderActivity.this, "Loading complete!", Toast.LENGTH_SHORT).show();
         } catch (ExecutionException | RetryException e) {
             Toast.makeText(DownloaderActivity.this, "Loading failed!", Toast.LENGTH_SHORT).show();

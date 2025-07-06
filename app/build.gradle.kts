@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("androidx.room")
 }
 
 android {
@@ -34,10 +35,13 @@ android {
         checkReleaseBuilds = true
         abortOnError = true // Fails the build on lint errors
     }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

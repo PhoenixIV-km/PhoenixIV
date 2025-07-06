@@ -1,24 +1,22 @@
 package com.quatre.phoenix.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 import java.io.Serializable;
 import java.util.UUID;
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
-@Entity(foreignKeys = @ForeignKey(entity = Manga.class, parentColumns = "id", childColumns = "idManga"))
-@Getter
-@Setter
+@Entity
 @RequiredArgsConstructor
+@NoArgsConstructor
 public class Chapter implements Serializable {
     @PrimaryKey
     @NonNull
-    private String id = String.valueOf(UUID.randomUUID());
+    private String id = UUID.randomUUID().toString();
 
+    // foreign key Manga.id
     @NonNull
     private String idManga;
 
@@ -29,4 +27,48 @@ public class Chapter implements Serializable {
     private String name;
 
     private boolean isRead = false;
+
+    @NonNull
+    public String getId() {
+        return id;
+    }
+
+    public void setId(@NonNull String id) {
+        this.id = id;
+    }
+
+    @NonNull
+    public String getIdManga() {
+        return idManga;
+    }
+
+    public void setIdManga(@NonNull String idManga) {
+        this.idManga = idManga;
+    }
+
+    @NonNull
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(@NonNull String url) {
+        this.url = url;
+    }
+
+    @NonNull
+    public String getName() {
+        return name;
+    }
+
+    public void setName(@NonNull String name) {
+        this.name = name;
+    }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
+    }
 }
