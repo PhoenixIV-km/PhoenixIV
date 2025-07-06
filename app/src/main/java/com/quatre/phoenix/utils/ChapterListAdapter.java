@@ -12,16 +12,14 @@ import com.quatre.phoenix.R;
 import com.quatre.phoenix.activity.DownloaderActivity;
 import com.quatre.phoenix.entity.Chapter;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.TextViewHolder> {
 
-    private final List<Chapter> items;
     private final Context context;
-
-    public ChapterListAdapter(Context context, List<Chapter> items) {
-        this.context = context;
-        this.items = items;
-    }
+    private final String mangaName;
+    private final List<Chapter> items;
 
     @NonNull
     @Override
@@ -38,7 +36,8 @@ public class ChapterListAdapter extends RecyclerView.Adapter<ChapterListAdapter.
         // Set click listener
         holder.textView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DownloaderActivity.class);
-            intent.putExtra("chapter", chapter); // optionally pass data
+            intent.putExtra("mangaName", mangaName);
+            intent.putExtra("chapter", chapter);
             context.startActivity(intent);
         });
     }

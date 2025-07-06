@@ -31,16 +31,20 @@ public class DownloaderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_downloader);
 
         // get extra
+        final String mangaName = getIntent().getStringExtra("mangaName");
         final Chapter chapter = (Chapter) getIntent().getSerializableExtra("chapter");
 
         final var downloadButton = findViewById(R.id.downloadButton);
         final var displayButton = findViewById(R.id.displayButton);
         displayButton.setEnabled(false); // Initially disabled
-        downloadButton.setOnClickListener(v -> manageImages(displayButton, chapter));
-        displayButton.setOnClickListener(v -> openReadActivity());
+        downloadButton.setOnClickListener(v -> manageImages(displayButton, mangaName, chapter));
+        displayButton.setOnClickListener(v -> {
+            assert chapter != null;
+            openReadActivity(mangaName, chapter);
+        });
     }
 
-    private void manageImages(final View displayButton, final Chapter chapter) {
+    private void manageImages(final View displayButton, final String mangaName, final Chapter chapter) {
         final Retryer<List<Element>> loadingRetryer = FileUtils.getRetryer();
         final Retryer<List<File>> storingRetryer = FileUtils.getRetryer();
         final List<Element> pictures;
@@ -57,7 +61,7 @@ public class DownloaderActivity extends AppCompatActivity {
         // store all pictures internally
         runOnUiThread(() -> {
             try {
-                storingRetryer.call(() -> downloadService.storeAllPicturesOnInternalMemory(pictures, "MagicEmperor", "717", getFilesDir().getAbsolutePath()).get());
+                storingRetryer.call(() -> downloadService.storeAllPicturesOnInternalMemory(pictures, mangaName, chapter.getName(), getFilesDir().getAbsolutePath()).get());
                 displayButton.setEnabled(true); // Enable the display button when download is complete
                 Toast.makeText(DownloaderActivity.this, "Download complete!", Toast.LENGTH_SHORT).show();
             } catch (ExecutionException | RetryException e) {
@@ -67,10 +71,10 @@ public class DownloaderActivity extends AppCompatActivity {
         });
     }
 
-    private void openReadActivity() {
+    private void openReadActivity(final String mangaName, final Chapter chapter) {
         final var intent = new Intent(DownloaderActivity.this, ReaderActivity.class);
-        intent.putExtra("mangaName", "MagicEmperor");
-        intent.putExtra("chapterName", "717");
+        intent.putExtra("mangaName", mangaName);
+        intent.putExtra("chapterName", chapter.getName());
         startActivity(intent);
     }
 

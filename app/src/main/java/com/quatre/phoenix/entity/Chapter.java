@@ -28,6 +28,8 @@ public class Chapter implements Serializable {
 
     private boolean isRead = false;
 
+    private boolean isDownloaded = false;
+
     @NonNull
     public String getId() {
         return id;
@@ -70,5 +72,13 @@ public class Chapter implements Serializable {
 
     public void setRead(boolean read) {
         isRead = read;
+    }
+
+    public boolean isDownloaded() {
+        return isDownloaded;
+    }
+
+    public void setDownloaded(boolean downloaded) {
+        isDownloaded = downloaded;
     }
 }

@@ -43,9 +43,8 @@ public class MangaActivity extends AppCompatActivity {
             Toast.makeText(MangaActivity.this, "Loading failed!", Toast.LENGTH_SHORT).show();
             throw new RuntimeException(e);
         }
-        ChapterListAdapter adapter = new ChapterListAdapter(this, chaptersUrls);
+        ChapterListAdapter adapter = new ChapterListAdapter(this, manga.getName(), chaptersUrls);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-
     }
 }
