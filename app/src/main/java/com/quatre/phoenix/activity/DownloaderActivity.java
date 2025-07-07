@@ -3,7 +3,6 @@ package com.quatre.phoenix.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import androidx.appcompat.app.AppCompatActivity;
 import com.github.rholder.retry.RetryException;
 import com.github.rholder.retry.Retryer;
 import com.quatre.phoenix.R;
@@ -17,7 +16,7 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class DownloaderActivity extends AppCompatActivity {
+public class DownloaderActivity extends MenuActivity {
 
     private DownloadService downloadService;
 
@@ -28,7 +27,10 @@ public class DownloaderActivity extends AppCompatActivity {
 
         // init view
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_downloader);
+        // init menu and but current activity into menu content
+        loadContentLayout(R.layout.activity_downloader);
+        // done by the menu now
+//        setContentView(R.layout.activity_downloader);
 
         // get extra
         final String mangaName = getIntent().getStringExtra("mangaName");

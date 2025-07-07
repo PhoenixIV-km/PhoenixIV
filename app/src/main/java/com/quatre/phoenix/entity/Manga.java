@@ -28,6 +28,9 @@ public class Manga implements Serializable {
     private String picturePath;
 
     @NonNull
+    private Integer order = 99;
+
+    @NonNull
     public String getId() {
         return id;
     }
@@ -69,5 +72,14 @@ public class Manga implements Serializable {
 
     public void setPicturePath(String picturePath) {
         this.picturePath = picturePath;
+    }
+
+    @NonNull
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(@NonNull Integer order) {
+        this.order = order;
     }
 }

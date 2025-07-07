@@ -1,7 +1,6 @@
 package com.quatre.phoenix.activity;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.quatre.phoenix.R;
@@ -13,7 +12,7 @@ import com.quatre.phoenix.utils.SnackbarMaker;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class LibraryActivity extends AppCompatActivity {
+public class LibraryActivity extends MenuActivity {
 
     private MangaService mangaService;
 
@@ -24,7 +23,11 @@ public class LibraryActivity extends AppCompatActivity {
 
         // init view
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_library);
+        // init menu and but current activity into menu content
+        loadContentLayout(R.layout.activity_library);
+//        this call is now replaced by the menu above
+//        setContentView(R.layout.activity_library);
+
         RecyclerView recyclerView = findViewById(R.id.libraryView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 

@@ -3,4 +3,7 @@
     <string name="image">image</string>
     <string name="download">Download</string>
     <string name="display">Display</string>
+    <string name="home">Home</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
 </resources>

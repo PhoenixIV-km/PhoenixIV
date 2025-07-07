@@ -1,7 +1,6 @@
 package com.quatre.phoenix.activity;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.github.rholder.retry.RetryException;
@@ -20,7 +19,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class MangaActivity extends AppCompatActivity {
+public class MangaActivity extends MenuActivity {
 
     private MangaService mangaService;
 
@@ -31,7 +30,12 @@ public class MangaActivity extends AppCompatActivity {
 
         // init view
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manga);
+        // init menu and but current activity into menu content
+        loadContentLayout(R.layout.activity_manga);
+        // done by menu now
+//        setContentView(R.layout.activity_manga);
+
+        // init element
         RecyclerView recyclerView = findViewById(R.id.mangaView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
