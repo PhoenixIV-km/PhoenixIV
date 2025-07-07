@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.quatre.phoenix.entity.Manga;
 import com.quatre.phoenix.service.DownloadService;
+import com.quatre.phoenix.utils.UrlUtils;
 import org.jsoup.nodes.Element;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,34 +22,34 @@ import lombok.extern.slf4j.Slf4j;
 public class DownloadServiceImpl extends AbstractWebBrowserServiceImpl implements DownloadService {
 
     @Override
-    public ListenableFuture<List<File>> storeAllPicturesOnInternalMemory(List<Element> elements, String mangaName, String chapter, String contextPath) {
-        log.info("Storing manga {}, chapter {}, @{}", mangaName, chapter, contextPath);
+    public ListenableFuture<List<File>> storeAllPicturesOnInternalMemory(List<Element> elements, Manga manga, String chapter, String contextPath) {
+        log.info("Storing manga {}, chapter {}, @{}", manga.getName(), chapter, contextPath);
         List<ListenableFuture<File>> futures = new ArrayList<>();
         var i = 0;
         for (final var element : elements) {
             final var index = i; // lambda needs final
-            ListenableFuture<File> future = listeningExecutor.submit(() -> storePictureOnInternalMemory(element, mangaName, chapter, contextPath, index));
+            ListenableFuture<File> future = listeningExecutor.submit(() -> storePictureOnInternalMemory(element, manga, chapter, contextPath, index));
             i++;
             futures.add(future);
         }
         return Futures.allAsList(futures);
     }
 
-    private File storePictureOnInternalMemory(Element element, String mangaName, String chapter, String contextPath, int i) throws IOException {
+    private File storePictureOnInternalMemory(Element element, Manga manga, String chapter, String contextPath, int i) throws IOException {
         log.info("Storing img {}.jpg", i);
         try {
             // Open stream from URL
             URL url = new URL(element.absUrl("src"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");  // Spoof browser
-            connection.setRequestProperty("Referer", "https://manhuaplus.com/");
+            connection.setRequestProperty("Referer", UrlUtils.extractBaseUrl(manga.getUrl()));
             InputStream input = connection.getInputStream();
 
             // Decode stream into a Bitmap
             Bitmap bitmap = BitmapFactory.decodeStream(input);
 
             // Create file in internal storage in /data/user/0/com.quatre.phoenix/files/MagicEmperor/717/0.jpg
-            File file = new File(contextPath + "/" + mangaName + "/" + chapter + "/" + i + ".jpg");
+            File file = new File(contextPath + "/" + manga.getName() + "/" + chapter + "/" + i + ".jpg");
             // Make sure all parent directories exist
             File parent = file.getParentFile();
             assert parent == null || parent.exists() || parent.mkdirs();

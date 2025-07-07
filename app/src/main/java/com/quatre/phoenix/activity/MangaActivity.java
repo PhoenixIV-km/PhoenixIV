@@ -32,8 +32,6 @@ public class MangaActivity extends MenuActivity {
         super.onCreate(savedInstanceState);
         // init menu and but current activity into menu content
         loadContentLayout(R.layout.activity_manga);
-        // done by menu now
-//        setContentView(R.layout.activity_manga);
 
         // init element
         RecyclerView recyclerView = findViewById(R.id.mangaView);
@@ -58,7 +56,7 @@ public class MangaActivity extends MenuActivity {
         }
 
         // generate chapter list
-        ChapterListAdapter adapter = new ChapterListAdapter(this, manga.getName(), chaptersUrls);
+        ChapterListAdapter adapter = new ChapterListAdapter(this, manga, chaptersUrls);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }

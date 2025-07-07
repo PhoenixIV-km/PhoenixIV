@@ -49,9 +49,9 @@ public class MangaServiceInstrumentedTest {
 
     @Test
     public void testGetAllMangas() throws ExecutionException, InterruptedException {
-        final var m1 = new Manga("url", "css", "name");
-        final var m2 = new Manga("url2", "css2", "name2");
-        PhoenixIVApplication.getAppDatabase().mangaDao().insertAll(m1, m2);
+        final var m1 = new Manga("url", "name", "css");
+        final var m2 = new Manga("url2", "name2", "css2");
+        PhoenixIVApplication.getDatabase().mangaDao().insertAll(m1, m2);
         final var mangas = mangaService.getAllMangas().get();
         assertEquals(2, mangas.size());
         assertEquals("name", mangas.get(0).getName());

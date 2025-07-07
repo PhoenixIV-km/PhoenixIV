@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- header -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_height="wrap_content"
@@ -17,6 +18,7 @@
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+        <!-- children content inserted there -->
         <FrameLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"

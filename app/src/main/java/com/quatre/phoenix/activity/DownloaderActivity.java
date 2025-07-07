@@ -7,6 +7,7 @@ import com.github.rholder.retry.RetryException;
 import com.github.rholder.retry.Retryer;
 import com.quatre.phoenix.R;
 import com.quatre.phoenix.entity.Chapter;
+import com.quatre.phoenix.entity.Manga;
 import com.quatre.phoenix.impl.DownloadServiceImpl;
 import com.quatre.phoenix.service.DownloadService;
 import com.quatre.phoenix.utils.FileUtils;
@@ -29,24 +30,23 @@ public class DownloaderActivity extends MenuActivity {
         super.onCreate(savedInstanceState);
         // init menu and but current activity into menu content
         loadContentLayout(R.layout.activity_downloader);
-        // done by the menu now
-//        setContentView(R.layout.activity_downloader);
 
         // get extra
-        final String mangaName = getIntent().getStringExtra("mangaName");
+        final Manga manga = (Manga) getIntent().getSerializableExtra("manga");
         final Chapter chapter = (Chapter) getIntent().getSerializableExtra("chapter");
 
         final var downloadButton = findViewById(R.id.downloadButton);
         final var displayButton = findViewById(R.id.displayButton);
         displayButton.setEnabled(false); // Initially disabled
-        downloadButton.setOnClickListener(v -> manageImages(displayButton, mangaName, chapter));
+        downloadButton.setOnClickListener(v -> manageImages(displayButton, manga, chapter));
         displayButton.setOnClickListener(v -> {
             assert chapter != null;
-            openReadActivity(mangaName, chapter);
+            assert manga != null;
+            openReadActivity(manga.getName(), chapter);
         });
     }
 
-    private void manageImages(final View displayButton, final String mangaName, final Chapter chapter) {
+    private void manageImages(final View displayButton, final Manga manga, final Chapter chapter) {
         final Retryer<List<Element>> loadingRetryer = FileUtils.getRetryer();
         final Retryer<List<File>> storingRetryer = FileUtils.getRetryer();
         final List<Element> pictures;
@@ -64,7 +64,7 @@ public class DownloaderActivity extends MenuActivity {
         // store all pictures internally
         runOnUiThread(() -> {
             try {
-                storingRetryer.call(() -> downloadService.storeAllPicturesOnInternalMemory(pictures, mangaName, chapter.getName(), getFilesDir().getAbsolutePath()).get());
+                storingRetryer.call(() -> downloadService.storeAllPicturesOnInternalMemory(pictures, manga, chapter.getName(), getFilesDir().getAbsolutePath()).get());
                 displayButton.setEnabled(true); // Enable the display button when download is complete
                 SnackbarMaker.showCustomSnackbar(rootView, "Download complete!", Boolean.TRUE);
             } catch (ExecutionException | RetryException e) {

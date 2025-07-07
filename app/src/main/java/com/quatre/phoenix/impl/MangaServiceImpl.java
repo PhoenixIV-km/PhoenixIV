@@ -12,6 +12,14 @@ public class MangaServiceImpl extends AbstractWebBrowserServiceImpl implements M
 
     @Override
     public ListenableFuture<List<Manga>> getAllMangas() {
-        return listeningExecutor.submit(() -> PhoenixIVApplication.getAppDatabase().mangaDao().getAll());
+        return listeningExecutor.submit(() -> PhoenixIVApplication.getDatabase().mangaDao().getAll());
+    }
+
+    @Override
+    public ListenableFuture<Void> addManga(Manga manga) {
+        return listeningExecutor.submit(() -> {
+            PhoenixIVApplication.getDatabase().mangaDao().insert(manga);
+            return null;
+        });
     }
 }

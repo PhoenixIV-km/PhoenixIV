@@ -6,4 +6,8 @@
     <string name="home">Home</string>
     <string name="navigation_drawer_open">Open</string>
     <string name="navigation_drawer_close">Close</string>
+    <string name="add_manga">Add Manga</string>
+    <string name="manga_url">Manga URL</string>
+    <string name="manga_name">Manga Name</string>
+    <string name="css_query">Css query</string>
 </resources>

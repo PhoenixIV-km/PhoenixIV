@@ -15,6 +15,12 @@ public interface MangaDao {
     @Insert
     void insertAll(Manga... mangas);
 
+    @Insert
+    void insert(Manga manga);
+
+    @Delete
+    void deleteAll(Manga... mangas);
+
     @Delete
     void delete(Manga manga);
 }

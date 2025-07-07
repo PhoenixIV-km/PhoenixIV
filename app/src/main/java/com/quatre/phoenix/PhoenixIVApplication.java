@@ -10,13 +10,13 @@ import lombok.Getter;
 public class PhoenixIVApplication extends Application {
 
     @Getter
-    private static AppDatabase appDatabase;
+    private static AppDatabase database;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "app-database")
+        database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "app-database")
                 .addMigrations(MIGRATION_1_2)
                 .build();
     }

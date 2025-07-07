@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="16dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText
+        android:id="@+id/input_url"
+        android:autofillHints="@string/manga_url"
+        android:hint="@string/manga_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textUri" />
+
+    <EditText
+        android:id="@+id/input_name"
+        android:autofillHints="@string/manga_name"
+        android:hint="@string/manga_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/input_css_query"
+        android:autofillHints="@string/css_query"
+        android:hint="@string/css_query"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text" />
+
+</LinearLayout>
