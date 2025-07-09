@@ -55,7 +55,7 @@ public abstract class MenuActivity extends AppCompatActivity {
     protected void loadContentLayout(@LayoutRes int layoutId) {
         FrameLayout contentFrame = findViewById(R.id.content_frame);
         if (contentFrame == null) {
-            throw new IllegalStateException("content_frame not found. Did you call setContentView()?");
+            throw new IllegalStateException("content_frame not found. Did you call setContentView()? or call it 2 times with wrap and content?");
         }
         View content = getLayoutInflater().inflate(layoutId, contentFrame, false);
         contentFrame.addView(content);

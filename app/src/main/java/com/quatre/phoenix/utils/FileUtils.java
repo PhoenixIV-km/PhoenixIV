@@ -24,6 +24,8 @@ public class FileUtils {
         }
     }
 
+    // specify T when using
+    // final Retryer<List<Element>> loadingRetryer = FileUtils.getRetryer();
     public static <T> Retryer<T> getRetryer() {
         return RetryerBuilder.<T>newBuilder()
                 .retryIfExceptionOfType(ExecutionException.class) // retry if Exception thrown

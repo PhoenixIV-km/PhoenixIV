@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,9 @@ public class DownloadServiceImpl extends AbstractWebBrowserServiceImpl implement
             input.close();
 
             return file;
+        } catch (MalformedURLException e) {
+            log.error("Error extracting url {}", element.absUrl("src"), e);
+            throw e;
         } catch (IOException e) {
             log.error("Error storing picture", e);
             throw e;

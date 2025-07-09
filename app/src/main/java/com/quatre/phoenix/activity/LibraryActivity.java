@@ -32,7 +32,7 @@ public class LibraryActivity extends MenuActivity {
         super.onCreate(savedInstanceState);
         rootView = findViewById(android.R.id.content);
 
-        // init menu and but current activity into menu content
+        // init menu and put current activity into menu content
         loadContentLayout(R.layout.activity_library);
 
         // init manga list
@@ -74,8 +74,7 @@ public class LibraryActivity extends MenuActivity {
                             SnackbarMaker.showCustomSnackbar(rootView, "Manga added!", Boolean.TRUE);
                             refreshMangaList();
                         } catch (ExecutionException | InterruptedException e) {
-                            SnackbarMaker.showCustomSnackbar(rootView, "Manga add failed!", Boolean.FALSE);
-                            throw new RuntimeException(e);
+                            SnackbarMaker.showCustomSnackbar(rootView, "Manga adding failed!", Boolean.FALSE);
                         }
                     }
                 })
@@ -91,7 +90,7 @@ public class LibraryActivity extends MenuActivity {
             SnackbarMaker.showCustomSnackbar(rootView, "Loading library complete!", Boolean.TRUE);
         } catch (ExecutionException | InterruptedException e) {
             SnackbarMaker.showCustomSnackbar(rootView, "Loading library failed!", Boolean.FALSE);
-            throw new RuntimeException(e);
+            return;
         }
         // TODO REMOVE
         if (mangaList.isEmpty()) {

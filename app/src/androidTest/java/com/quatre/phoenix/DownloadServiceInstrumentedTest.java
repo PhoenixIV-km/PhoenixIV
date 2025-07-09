@@ -2,12 +2,15 @@ package com.quatre.phoenix;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import android.content.Context;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import com.quatre.phoenix.entity.Manga;
 import com.quatre.phoenix.impl.DownloadServiceImpl;
 import com.quatre.phoenix.service.DownloadService;
+import org.jsoup.HttpStatusException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,9 +26,11 @@ public class DownloadServiceInstrumentedTest {
     public static final String URL = "https://manhuaplus.com/manga/demon-magic-emperor01/chapter-717/";
     public static final String MANGA_NAME = "MagicEmperor";
     public static final String CHAPTER = "717";
+    public static final String URL_CLOUDFLARE = "https://www.toongod.org/webtoon/the-beginning-after-the-end-manhwa-a00cbc/";
     public static final String SLASH = "/";
     public static final String CSS_QUERY = "img";
     public static final int IMAGE_COUNT = 10;
+    public static final String CSS_QUERY_CHAPTER_LIST = "ul > li.wp-manga-chapter > a";
 
     private Context context;
     private DownloadService downloadService;
@@ -60,13 +65,34 @@ public class DownloadServiceInstrumentedTest {
     public void testStoreAllPicturesOnInternalMemory() throws IOException, InterruptedException, ExecutionException {
         final var pictures = downloadService.getAllElementsFromUrl(URL, CSS_QUERY).get();
         final var path = Paths.get(context.getFilesDir().getPath());
-        final var files = downloadService.storeAllPicturesOnInternalMemory(pictures, MANGA_NAME, CHAPTER, path.toAbsolutePath().toString()).get();
+        final var manga = new Manga(URL, MANGA_NAME, CSS_QUERY_CHAPTER_LIST);
+        final var files = downloadService.storeAllPicturesOnInternalMemory(pictures, manga, CHAPTER, path.toAbsolutePath().toString()).get();
         assertEquals(IMAGE_COUNT, files.size());
         final var sortedList = files.stream().sorted().collect(Collectors.toList());
         final var last = sortedList.get(sortedList.size() - 1);
         assertEquals(path + SLASH + MANGA_NAME + SLASH + CHAPTER + SLASH + "9.jpg", last.toPath().toAbsolutePath().toString());
         try (FileChannel imageFileChannel = FileChannel.open(last.toPath())) {
             assertEquals(839, imageFileChannel.size());
+        }
+    }
+
+    // BitmapFactory.decodeStream() needs Instrumented
+    @Test
+    public void testCloudfareThrows() {
+        try {
+            downloadService.getAllElementsFromUrl(URL_CLOUDFLARE, CSS_QUERY).get();
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();  // Unwrap the real exception
+            if (cause instanceof HttpStatusException) {
+                HttpStatusException httpEx = (HttpStatusException) cause;
+                assertEquals(403, httpEx.getStatusCode());
+                assertEquals("HTTP error fetching URL. Status=403, URL=[https://www.toongod.org/webtoon/the-beginning-after-the-end-manhwa-a00cbc/]", httpEx.getMessage());
+            } else {
+                fail();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();  // Always re-interrupt
+            fail();
         }
     }
 }
