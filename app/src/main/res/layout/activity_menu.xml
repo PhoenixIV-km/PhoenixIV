@@ -18,7 +18,7 @@
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-        <!-- children content inserted there -->
+        <!-- children content inserted here -->
         <FrameLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"

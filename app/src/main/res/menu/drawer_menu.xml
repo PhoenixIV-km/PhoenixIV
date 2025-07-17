@@ -2,4 +2,24 @@
     <item android:id="@+id/nav_home"
         android:title="@string/home"
         android:icon="@drawable/ic_home"/>
+
+    <item android:id="@+id/delete"
+        android:title="@string/delete"
+        android:icon="@drawable/ic_delete"/>
+
+    <item android:id="@+id/load_csv"
+        android:title="@string/load_csv"
+        android:icon="@drawable/ic_csv"/>
+
+    <item android:id="@+id/csv_path"
+        android:title="@string/csv_path"
+        android:icon="@drawable/ic_explore"/>
+
+    <item android:id="@+id/csv_open"
+        android:title="@string/csv_open"
+        android:icon="@drawable/ic_file_open"/>
+
+    <item android:id="@+id/init_csv"
+        android:title="@string/init_csv"
+        android:icon="@drawable/ic_file_save"/>
 </menu>

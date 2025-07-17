@@ -58,8 +58,7 @@ public class MangaActivity extends MenuActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mangaService.onDestroy();
+    void refreshMangaList() {
+        // unused
     }
 }

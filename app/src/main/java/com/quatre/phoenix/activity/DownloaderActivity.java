@@ -76,8 +76,7 @@ public class DownloaderActivity extends MenuActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        downloadService.onDestroy();
+    void refreshMangaList() {
+        // unused
     }
 }

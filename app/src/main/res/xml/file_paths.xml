@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Grant access to internal files directory -->
+    <external-files-path
+        name="external_files"
+        path="." />
+</paths>

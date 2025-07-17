@@ -13,14 +13,14 @@ public interface MangaDao {
     List<Manga> getAll();
 
     @Insert
-    void insertAll(Manga... mangas);
-
-    @Insert
     void insert(Manga manga);
 
-    @Delete
-    void deleteAll(Manga... mangas);
+    @Insert
+    void insertAll(List<Manga> mangas);
 
     @Delete
     void delete(Manga manga);
+
+    @Query("DELETE FROM manga")
+    void deleteAll();
 }

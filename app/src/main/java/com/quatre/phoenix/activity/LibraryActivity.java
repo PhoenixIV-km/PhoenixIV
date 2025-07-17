@@ -47,14 +47,8 @@ public class LibraryActivity extends MenuActivity {
         refreshMangaList();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mangaService.onDestroy();
-    }
-
     private void showAddMangaDialog() {
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_manga, null);
+        final View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_manga, null);
 
         new AlertDialog.Builder(this)
                 .setTitle("Add Manga")
@@ -82,12 +76,12 @@ public class LibraryActivity extends MenuActivity {
                 .show();
     }
 
-    private void refreshMangaList() {
+    @Override
+    void refreshMangaList() {
         final List<Manga> mangaList;
 
         try {
             mangaList = mangaService.getAllMangas().get();
-            SnackbarMaker.showCustomSnackbar(rootView, "Loading library complete!", Boolean.TRUE);
         } catch (ExecutionException | InterruptedException e) {
             SnackbarMaker.showCustomSnackbar(rootView, "Loading library failed!", Boolean.FALSE);
             return;

@@ -10,4 +10,9 @@
     <string name="manga_url">Manga URL</string>
     <string name="manga_name">Manga Name</string>
     <string name="css_query">Css query</string>
+    <string name="delete">Delete</string>
+    <string name="load_csv">Load CSV</string>
+    <string name="csv_path">CSV path</string>
+    <string name="csv_open">CSV open</string>
+    <string name="init_csv">Init CSV</string>
 </resources>

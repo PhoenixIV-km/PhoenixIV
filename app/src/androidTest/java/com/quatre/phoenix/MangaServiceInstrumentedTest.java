@@ -12,6 +12,11 @@ import com.quatre.phoenix.service.MangaService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -20,14 +25,16 @@ public class MangaServiceInstrumentedTest {
 
     public static final String URL = "https://manhuaplus.com/manga/demon-magic-emperor01/";
     public static final String CSS_QUERY = "ul > li.wp-manga-chapter > a";
+    public static final String FILE_NAME = "loadMock.csv";
 
     private Context context;
     private MangaService mangaService;
 
     @Before
-    public void init() {
+    public void init() throws ExecutionException, InterruptedException {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         mangaService = new MangaServiceImpl();
+        mangaService.deleteAllMangas().get();
     }
 
     @Test
@@ -48,12 +55,85 @@ public class MangaServiceInstrumentedTest {
     }
 
     @Test
-    public void testGetAllMangas() throws ExecutionException, InterruptedException {
+    public void testAddManga() throws ExecutionException, InterruptedException {
+        // test empty
+        var mangas = mangaService.getAllMangas().get();
+        assertEquals(0, mangas.size());
+        // add 1 and test not empty
+        final var m1 = new Manga("url", "name", "css");
+        mangaService.addManga(m1).get();
+        mangas = mangaService.getAllMangas().get();
+        assertEquals(1, mangas.size());
+        assertEquals("name", mangas.get(0).getName());
+    }
+
+    @Test
+    public void testAddAllMangas() throws ExecutionException, InterruptedException {
         final var m1 = new Manga("url", "name", "css");
         final var m2 = new Manga("url2", "name2", "css2");
-        PhoenixIVApplication.getDatabase().mangaDao().insertAll(m1, m2);
+        mangaService.addAllMangas(List.of(m1, m2)).get();
         final var mangas = mangaService.getAllMangas().get();
         assertEquals(2, mangas.size());
         assertEquals("name", mangas.get(0).getName());
+    }
+
+    @Test
+    public void testDeleteManga() throws ExecutionException, InterruptedException {
+        // test empty
+        var mangas = mangaService.getAllMangas().get();
+        assertEquals(0, mangas.size());
+
+        // add 1 and test not empty
+        final var m1 = new Manga("url", "name", "css");
+        mangaService.addManga(m1).get();
+        mangas = mangaService.getAllMangas().get();
+        assertEquals(1, mangas.size());
+        assertEquals("name", mangas.get(0).getName());
+
+        // delete and test empty
+        mangaService.deleteManga(mangas.get(0)).get();
+        mangas = mangaService.getAllMangas().get();
+        assertEquals(0, mangas.size());
+    }
+
+    @Test
+    public void testDeleteAllMangas() throws ExecutionException, InterruptedException {
+        // add 2 and test not empty
+        final var m1 = new Manga("url", "name", "css");
+        final var m2 = new Manga("url2", "name2", "css2");
+        mangaService.addAllMangas(List.of(m1, m2)).get();
+        var mangas = mangaService.getAllMangas().get();
+        assertEquals(2, mangas.size());
+        assertEquals("name", mangas.get(0).getName());
+
+        // delete and test empty
+        mangaService.deleteAllMangas().get();
+        mangas = mangaService.getAllMangas().get();
+        assertEquals(0, mangas.size());
+    }
+
+    @Test
+    public void loadAllMangasFromCsv() throws IOException, ExecutionException, InterruptedException {
+        try (var inputStream = context.getAssets().open(FILE_NAME)) {
+            final var file = copyAssetToFile(inputStream);
+            mangaService.loadAllMangasFromCsv(file).get();
+        }
+        var mangas = mangaService.getAllMangas().get();
+        assertEquals(3, mangas.size());
+        assertEquals("Magic Emperor", mangas.get(0).getName());
+        assertEquals("https://manhuaplus.com/manga/tales-of-demons-and-gods01/", mangas.get(1).getUrl());
+        assertEquals("ul#itemList > li > a", mangas.get(2).getCssQuery());
+    }
+
+    private File copyAssetToFile(final InputStream inputStream) throws IOException {
+        File outFile = new File(context.getCacheDir(), FILE_NAME);
+        try (FileOutputStream outputStream = new FileOutputStream(outFile)) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+        }
+        return outFile;
     }
 }
