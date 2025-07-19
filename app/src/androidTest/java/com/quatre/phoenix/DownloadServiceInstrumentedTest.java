@@ -2,6 +2,7 @@ package com.quatre.phoenix;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import android.content.Context;
@@ -14,9 +15,11 @@ import org.jsoup.HttpStatusException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -25,7 +28,7 @@ public class DownloadServiceInstrumentedTest {
 
     public static final String URL = "https://manhuaplus.com/manga/demon-magic-emperor01/chapter-717/";
     public static final String MANGA_NAME = "MagicEmperor";
-    public static final String CHAPTER = "717";
+    public static final String CHAPTER_NAME = "717";
     public static final String URL_CLOUDFLARE = "https://www.toongod.org/webtoon/the-beginning-after-the-end-manhwa-a00cbc/";
     public static final String SLASH = "/";
     public static final String CSS_QUERY = "img";
@@ -66,11 +69,11 @@ public class DownloadServiceInstrumentedTest {
         final var pictures = downloadService.getAllElementsFromUrl(URL, CSS_QUERY).get();
         final var path = Paths.get(context.getFilesDir().getPath());
         final var manga = new Manga(URL, MANGA_NAME, CSS_QUERY_CHAPTER_LIST);
-        final var files = downloadService.storeAllPicturesOnInternalMemory(pictures, manga, CHAPTER, path.toAbsolutePath().toString()).get();
+        final var files = downloadService.storeAllPicturesOnInternalMemory(pictures, manga, CHAPTER_NAME, path.toAbsolutePath().toString()).get();
         assertEquals(IMAGE_COUNT, files.size());
         final var sortedList = files.stream().sorted().collect(Collectors.toList());
         final var last = sortedList.get(sortedList.size() - 1);
-        assertEquals(path + SLASH + MANGA_NAME + SLASH + CHAPTER + SLASH + "9.jpg", last.toPath().toAbsolutePath().toString());
+        assertEquals(path + SLASH + MANGA_NAME + SLASH + CHAPTER_NAME + SLASH + "9.jpg", last.toPath().toAbsolutePath().toString());
         try (FileChannel imageFileChannel = FileChannel.open(last.toPath())) {
             assertEquals(839, imageFileChannel.size());
         }
@@ -94,5 +97,21 @@ public class DownloadServiceInstrumentedTest {
             Thread.currentThread().interrupt();  // Always re-interrupt
             fail();
         }
+    }
+
+    @Test
+    public void testDeleteAllPicturesOnInternalMemory() throws ExecutionException, InterruptedException {
+        // add a chapter pictures
+        final var pictures = downloadService.getAllElementsFromUrl(URL, CSS_QUERY).get();
+        final var path = Paths.get(context.getFilesDir().getPath());
+        final var manga = new Manga(URL, MANGA_NAME, CSS_QUERY_CHAPTER_LIST);
+        final var files = downloadService.storeAllPicturesOnInternalMemory(pictures, manga, CHAPTER_NAME, path.toAbsolutePath().toString()).get();
+        assertEquals(IMAGE_COUNT, files.size());
+        final var directory = new File(path.toFile(), MANGA_NAME + "/" + CHAPTER_NAME);
+        assertEquals(IMAGE_COUNT, Objects.requireNonNull(directory.listFiles()).length);
+
+        // delete all the files and test nothing left
+        downloadService.deleteAllPicturesOnInternalMemory(MANGA_NAME, CHAPTER_NAME, path.toAbsolutePath().toString()).get();
+        assertNull(directory.listFiles());
     }
 }

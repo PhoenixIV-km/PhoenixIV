@@ -4,6 +4,7 @@ import com.github.rholder.retry.Retryer;
 import com.github.rholder.retry.RetryerBuilder;
 import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,5 +35,15 @@ public class FileUtils {
                 .withWaitStrategy(WaitStrategies.fixedWait(1, TimeUnit.SECONDS)) // wait 1 sec between tries
                 .withStopStrategy(StopStrategies.stopAfterAttempt(5)) // max 5 attempts
                 .build();
+    }
+
+    public static boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
     }
 }

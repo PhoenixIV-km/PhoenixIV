@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface ChapterService {
+    // inherited from AbstractWebBrowserServiceImpl
+    void onDestroy();
+
+    // implemented
     ListenableFuture<List<Chapter>> getAllChapters();
+    ListenableFuture<Void> update(Chapter chapter);
     ListenableFuture<Void> insertAllNewChapters(List<Chapter> chapters) throws ExecutionException, InterruptedException;
     ListenableFuture<Void> deleteAllChaptersFromManga(String idManga);
-    ListenableFuture<Void> markChaptersAsRead(String idChapter, boolean isRead);
     ListenableFuture<Void> markAllChaptersAsRead(String idManga, boolean isRead);
-    ListenableFuture<Void> markChapterAsDownloaded(String idChapter, boolean isDownloaded);
 }

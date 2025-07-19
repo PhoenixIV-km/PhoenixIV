@@ -18,6 +18,7 @@ import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
+import com.quatre.phoenix.PhoenixIVApplication;
 import com.quatre.phoenix.R;
 import com.quatre.phoenix.impl.MangaServiceImpl;
 import com.quatre.phoenix.service.MangaService;
@@ -46,7 +47,7 @@ public abstract class MenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // init services
-        mangaService = new MangaServiceImpl();
+        mangaService = new MangaServiceImpl(PhoenixIVApplication.getMangaDao());
 
         // init files
         csvFolder = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), CSV_FOLDER);

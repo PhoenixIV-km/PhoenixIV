@@ -12,5 +12,6 @@ public interface DownloadService {
     ListenableFuture<List<Element>> getAllElementsFromUrl(final String url, final String cssQuery);
 
     // implemented
-    ListenableFuture<List<File>> storeAllPicturesOnInternalMemory(List<Element> elements, Manga manga, String chapter, String contextPath);
+    ListenableFuture<List<File>> storeAllPicturesOnInternalMemory(List<Element> elements, Manga manga, String chapterName, String contextPath);
+    ListenableFuture<Void> deleteAllPicturesOnInternalMemory(String mangaName, String chapterName, String contextPath) throws RuntimeException;
 }

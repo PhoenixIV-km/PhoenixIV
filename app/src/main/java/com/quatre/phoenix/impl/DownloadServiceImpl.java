@@ -6,6 +6,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.quatre.phoenix.entity.Manga;
 import com.quatre.phoenix.service.DownloadService;
+import com.quatre.phoenix.utils.FileUtils;
 import com.quatre.phoenix.utils.UrlUtils;
 import org.jsoup.nodes.Element;
 import java.io.File;
@@ -36,7 +37,7 @@ public class DownloadServiceImpl extends AbstractWebBrowserServiceImpl implement
         return Futures.allAsList(futures);
     }
 
-    private File storePictureOnInternalMemory(Element element, Manga manga, String chapter, String contextPath, int i) throws IOException {
+    private File storePictureOnInternalMemory(Element element, Manga manga, String chapterName, String contextPath, int i) throws IOException {
         log.info("Storing img {}.jpg", i);
         try {
             // Open stream from URL
@@ -50,7 +51,7 @@ public class DownloadServiceImpl extends AbstractWebBrowserServiceImpl implement
             Bitmap bitmap = BitmapFactory.decodeStream(input);
 
             // Create file in internal storage in /data/user/0/com.quatre.phoenix/files/MagicEmperor/717/0.jpg
-            File file = new File(contextPath + "/" + manga.getName() + "/" + chapter + "/" + i + ".jpg");
+            File file = new File(contextPath + "/" + manga.getName() + "/" + chapterName + "/" + i + ".jpg");
             // Make sure all parent directories exist
             File parent = file.getParentFile();
             assert parent == null || parent.exists() || parent.mkdirs();
@@ -73,5 +74,17 @@ public class DownloadServiceImpl extends AbstractWebBrowserServiceImpl implement
             log.error("Error storing picture", e);
             throw e;
         }
+    }
+
+    @Override
+    public ListenableFuture<Void> deleteAllPicturesOnInternalMemory(String mangaName, String chapterName, String contextPath) throws RuntimeException {
+        log.info("Storing manga {}, chapter {}, @{}", mangaName, chapterName, contextPath);
+        return listeningExecutor.submit(() -> {
+            final var folder = new File(contextPath + "/" + mangaName + "/" + chapterName);
+            if (!FileUtils.deleteDirectory(folder)) {
+                throw new RuntimeException("Couldn't delete directory");
+            }
+            return null;
+        });
     }
 }

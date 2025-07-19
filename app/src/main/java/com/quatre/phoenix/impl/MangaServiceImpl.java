@@ -1,7 +1,7 @@
 package com.quatre.phoenix.impl;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.quatre.phoenix.PhoenixIVApplication;
+import com.quatre.phoenix.dao.MangaDao;
 import com.quatre.phoenix.entity.Manga;
 import com.quatre.phoenix.service.MangaService;
 import java.io.BufferedReader;
@@ -10,20 +10,24 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@RequiredArgsConstructor
 public class MangaServiceImpl extends AbstractWebBrowserServiceImpl implements MangaService {
+
+    private final MangaDao mangaDao;
 
     @Override
     public ListenableFuture<List<Manga>> getAllMangas() {
-        return listeningExecutor.submit(() -> PhoenixIVApplication.getDatabase().mangaDao().getAll());
+        return listeningExecutor.submit(mangaDao::getAll);
     }
 
     @Override
     public ListenableFuture<Void> addManga(final Manga manga) {
         return listeningExecutor.submit(() -> {
-            PhoenixIVApplication.getDatabase().mangaDao().insert(manga);
+            mangaDao.insert(manga);
             return null;
         });
     }
@@ -31,7 +35,7 @@ public class MangaServiceImpl extends AbstractWebBrowserServiceImpl implements M
     @Override
     public ListenableFuture<Void> addAllMangas(final List<Manga> mangas) {
         return listeningExecutor.submit(() -> {
-            PhoenixIVApplication.getDatabase().mangaDao().insertAll(mangas);
+            mangaDao.insertAll(mangas);
             return null;
         });
     }
@@ -60,7 +64,7 @@ public class MangaServiceImpl extends AbstractWebBrowserServiceImpl implements M
     @Override
     public ListenableFuture<Void> deleteAllMangas() {
         return listeningExecutor.submit(() -> {
-            PhoenixIVApplication.getDatabase().mangaDao().deleteAll();
+            mangaDao.deleteAll();
             return null;
         });
     }
@@ -68,7 +72,7 @@ public class MangaServiceImpl extends AbstractWebBrowserServiceImpl implements M
     @Override
     public ListenableFuture<Void> deleteManga(final Manga manga) {
         return listeningExecutor.submit(() -> {
-            PhoenixIVApplication.getDatabase().mangaDao().delete(manga);
+            mangaDao.delete(manga);
             return null;
         });
     }

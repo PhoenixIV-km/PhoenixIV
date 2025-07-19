@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
-public class MangaServiceInstrumentedTest {
+public class MangaServiceInstrumentedTest extends AbstractRoomInstrumentedTest {
 
     public static final String URL = "https://manhuaplus.com/manga/demon-magic-emperor01/";
     public static final String CSS_QUERY = "ul > li.wp-manga-chapter > a";
@@ -33,7 +33,7 @@ public class MangaServiceInstrumentedTest {
     @Before
     public void init() throws ExecutionException, InterruptedException {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        mangaService = new MangaServiceImpl();
+        mangaService = new MangaServiceImpl(mangaDao);
         mangaService.deleteAllMangas().get();
     }
 

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.quatre.phoenix.PhoenixIVApplication;
 import com.quatre.phoenix.R;
 import com.quatre.phoenix.adapter.MangaListAdapter;
 import com.quatre.phoenix.entity.Manga;
@@ -26,7 +27,7 @@ public class LibraryActivity extends MenuActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // init services
-        mangaService = new MangaServiceImpl();
+        mangaService = new MangaServiceImpl(PhoenixIVApplication.getMangaDao());
 
         // init view
         super.onCreate(savedInstanceState);
@@ -89,6 +90,7 @@ public class LibraryActivity extends MenuActivity {
         // TODO REMOVE
         if (mangaList.isEmpty()) {
             mangaList.add(new Manga("https://manhuaplus.com/manga/demon-magic-emperor01/", "Magic Emperor", "ul > li.wp-manga-chapter > a"));
+            mangaList.add(new Manga("https://manhuaplus.com/manga/tales-of-demons-and-gods01/", "Tales of demons and gods", "ul > li.wp-manga-chapter > a"));
             mangaList.add(new Manga("https://www.toongod.org/webtoon/the-beginning-after-the-end-manhwa-a00cbc/", "The Beginning After The End", "ul > li.wp-manga-chapter > a"));
         }
 
@@ -96,5 +98,11 @@ public class LibraryActivity extends MenuActivity {
         MangaListAdapter adapter = new MangaListAdapter(this, mangaList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mangaService.onDestroy();
     }
 }

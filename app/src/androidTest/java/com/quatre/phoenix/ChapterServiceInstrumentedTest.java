@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 
 @RunWith(AndroidJUnit4.class)
-public class ChapterServiceInstrumentedTest {
+public class ChapterServiceInstrumentedTest extends AbstractRoomInstrumentedTest {
 
     private final String ID_MANGA = "42";
 
@@ -26,7 +26,7 @@ public class ChapterServiceInstrumentedTest {
     @Before
     public void init() throws ExecutionException, InterruptedException {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        chapterService = new ChapterServiceImpl();
+        chapterService = new ChapterServiceImpl(chapterDao);
         chapterService.deleteAllChaptersFromManga(ID_MANGA).get();
     }
 
@@ -77,7 +77,9 @@ public class ChapterServiceInstrumentedTest {
         assertEquals(2, chapters.stream().filter(Predicate.not(Chapter::isRead)).count());
 
         // mark one as read and test again
-        chapterService.markChaptersAsRead(chapters.get(0).getId(), Boolean.TRUE).get();
+        var chapter = chapters.get(0);
+        chapter.setRead(Boolean.TRUE);
+        chapterService.update(chapter).get();
 
         // test 1 unread 1 read
         chapters = chapterService.getAllChapters().get();
@@ -105,8 +107,10 @@ public class ChapterServiceInstrumentedTest {
         var chapters = chapterService.getAllChapters().get();
         assertEquals(2, chapters.stream().filter(Predicate.not(Chapter::isDownloaded)).count());
 
-        // mark one as downloaded
-        chapterService.markChapterAsDownloaded(chapters.get(0).getId(), Boolean.TRUE).get();
+        // mark one as downloaded and test again
+        var chapter = chapters.get(0);
+        chapter.setDownloaded(Boolean.TRUE);
+        chapterService.update(chapter).get();
 
         // test 1 downloaded 1 not downloaded
         chapters = chapterService.getAllChapters().get();
